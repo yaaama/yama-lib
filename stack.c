@@ -1,18 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
+#include "stack.h"
 
-typedef struct Node Node;
-
-typedef struct Node {
-  void *val;
-  Node *next;
-} Node;
-
-typedef struct Stack {
-  Node *top;
-  int length;
-  int item_size;
-} Stack;
 
 /* Create a new stack */
 Stack *stack_new(int item_size) {

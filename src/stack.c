@@ -1,6 +1,7 @@
 #include "stack.h"
 #include "common.h"
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -9,6 +10,11 @@ Stack *stack_new(int item_size) {
   assert(item_size > 0 && "item_size must be > 0");
 
   Stack *stack = malloc(sizeof(Stack));
+  if (stack == NULL) {
+    fprintf(stderr, "Failed to make allocation!\n");
+    exit(-1);
+
+  }
   stack->length = 0;
   stack->item_size = item_size;
   stack->top = NULL;
@@ -23,7 +29,17 @@ void stack_push(Stack *stack, void *data) {
   }
 
   Node *item = malloc(sizeof(Node));
+  if (item == NULL) {
+    fprintf(stderr, "Failed to make allocation!\n");
+    exit(-1);
+  }
+
   item->val = malloc(stack->item_size);
+
+  if (item->val == NULL) {
+    fprintf(stderr, "Failed to make allocation!\n");
+    exit(-1);
+  }
   memcpy(item->val, data, stack->item_size);
   item->next = stack->top;
   stack->top = item;
@@ -43,6 +59,11 @@ void *stack_pop(Stack *stack) {
 
   /* Allocate */
   void *top_val = malloc(stack->item_size);
+
+  if (top_val == NULL) {
+    fprintf(stderr, "Failed to make allocation!\n");
+    exit(-1);
+  }
   /* Copy the value */
   memcpy(top_val, stack->top->val, stack->item_size);
 
@@ -81,6 +102,5 @@ void stack_destroy(Stack *stack) {
 
 u32 stack_size(Stack *stack) {
   assert(stack && "Stack is NULL");
-
   return stack->length;
 }

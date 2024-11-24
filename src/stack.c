@@ -6,7 +6,8 @@
 #include <string.h>
 
 /* Create a new stack.*/
-/* item_size must be the size (in bytes) of the items you want to push into the stack. */
+/* item_size must be the size (in bytes) of the items you want to push into the
+ * stack. */
 Stack *stack_new(int item_size) {
   assert(item_size > 0 && "item_size must be > 0");
 
@@ -46,7 +47,6 @@ void stack_push(Stack *stack, void *data) {
   stack->top = item;
   stack->length += 1;
 }
-
 
 /* Pop an item from the stack. */
 /* NOTE: You are responsible for the deallocation of the returned item. */

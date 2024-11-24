@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Create a new stack */
+/* Create a new stack.*/
+/* item_size must be the size (in bytes) of the items you want to push into the stack. */
 Stack *stack_new(int item_size) {
   assert(item_size > 0 && "item_size must be > 0");
 
@@ -13,14 +14,15 @@ Stack *stack_new(int item_size) {
   if (stack == NULL) {
     fprintf(stderr, "Failed to make allocation!\n");
     exit(-1);
-
   }
+
   stack->length = 0;
   stack->item_size = item_size;
   stack->top = NULL;
   return stack;
 }
 
+/* Push an item to the stack. */
 void stack_push(Stack *stack, void *data) {
   assert(stack != NULL && "Stack cannot be NULL");
 
@@ -35,7 +37,6 @@ void stack_push(Stack *stack, void *data) {
   }
 
   item->val = malloc(stack->item_size);
-
   if (item->val == NULL) {
     fprintf(stderr, "Failed to make allocation!\n");
     exit(-1);
@@ -46,6 +47,9 @@ void stack_push(Stack *stack, void *data) {
   stack->length += 1;
 }
 
+
+/* Pop an item from the stack. */
+/* NOTE: You are responsible for the deallocation of the returned item. */
 void *stack_pop(Stack *stack) {
   assert(stack != NULL && "Stack cannot be NULL");
   if (stack == NULL) {
@@ -59,11 +63,11 @@ void *stack_pop(Stack *stack) {
 
   /* Allocate */
   void *top_val = malloc(stack->item_size);
-
   if (top_val == NULL) {
     fprintf(stderr, "Failed to make allocation!\n");
     exit(-1);
   }
+
   /* Copy the value */
   memcpy(top_val, stack->top->val, stack->item_size);
 
@@ -74,10 +78,10 @@ void *stack_pop(Stack *stack) {
   free(popped);
 
   stack->length -= 1;
-
   return top_val;
 }
 
+/* Peek the value stored at the top of the stack. */
 void *stack_peek(Stack *stack) {
   if (stack->top == NULL) {
     return NULL;
@@ -85,9 +89,9 @@ void *stack_peek(Stack *stack) {
   return stack->top->val;
 }
 
-/* Destroys all Nodes, their stored values and also the Stack. */
+/* Destroys the stack. */
+/* Deallocates all nodes and their stored values. */
 void stack_destroy(Stack *stack) {
-
   Node *to_free = stack->top;
 
   while (to_free) {
@@ -96,10 +100,10 @@ void stack_destroy(Stack *stack) {
     free(to_free);
     to_free = next;
   }
-
   free(stack);
 }
 
+/* Return the number of items stored in the stack. */
 u32 stack_size(Stack *stack) {
   assert(stack && "Stack is NULL");
   return stack->length;

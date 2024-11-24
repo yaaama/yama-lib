@@ -27,6 +27,7 @@ Stack *stack_new(int item_size) {
 void stack_push(Stack *stack, void *data) {
   assert(stack != NULL && "Stack cannot be NULL");
 
+
   if ((stack == NULL) || (data == NULL)) {
     return;
   }
@@ -46,13 +47,19 @@ void stack_push(Stack *stack, void *data) {
   item->next = stack->top;
   stack->top = item;
   stack->length += 1;
+  /* fprintf(stderr, "Stack push :: Stack size: %d\n", stack->length); */
 }
 
 /* Pop an item from the stack. */
 /* NOTE: You are responsible for the deallocation of the returned item. */
 void *stack_pop(Stack *stack) {
   assert(stack != NULL && "Stack cannot be NULL");
-  assert(stack->length > 0 && "Stack size must be > 0");
+
+  /* fprintf(stderr, "Stack pop :: Stack size: %d\n", stack->length); */
+
+  if (stack->length == 0) {
+    return NULL;
+  }
 
   /* Allocate */
   void *top_val = malloc(stack->item_size);

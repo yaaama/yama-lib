@@ -1,11 +1,14 @@
+#include "stack.h"
+#include "common.h"
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stack.h"
-
 
 /* Create a new stack */
 Stack *stack_new(int item_size) {
-  Stack *stack = malloc(sizeof(*stack));
+  assert(item_size > 0 && "item_size must be > 0");
+
+  Stack *stack = malloc(sizeof(Stack));
   stack->length = 0;
   stack->item_size = item_size;
   stack->top = NULL;
@@ -13,9 +16,14 @@ Stack *stack_new(int item_size) {
 }
 
 void stack_push(Stack *stack, void *data) {
+  assert(stack != NULL && "Stack cannot be NULL");
+
+  if ((stack == NULL) || (data == NULL)) {
+    return;
+  }
 
   Node *item = malloc(sizeof(Node));
-  item->val = malloc(sizeof(stack->item_size));
+  item->val = malloc(stack->item_size);
   memcpy(item->val, data, stack->item_size);
   item->next = stack->top;
   stack->top = item;
@@ -23,17 +31,27 @@ void stack_push(Stack *stack, void *data) {
 }
 
 void *stack_pop(Stack *stack) {
+  assert(stack != NULL && "Stack cannot be NULL");
+  if (stack == NULL) {
+    return NULL;
+  }
 
   /* Stack is empty */
   if (stack->length == 0) {
     return NULL;
   }
 
-  Node *popped = stack->top;
-  void *top_val = stack->top->val;
+  /* Allocate */
+  void *top_val = malloc(stack->item_size);
+  /* Copy the value */
+  memcpy(top_val, stack->top->val, stack->item_size);
 
+  Node *popped = stack->top;
   stack->top = popped->next;
+  /* Free the copy inside of the node */
+  free(popped->val);
   free(popped);
+
   stack->length -= 1;
 
   return top_val;
@@ -56,8 +74,13 @@ void stack_destroy(Stack *stack) {
     free(to_free->val);
     free(to_free);
     to_free = next;
-    stack->length -= 1;
   }
 
   free(stack);
+}
+
+u32 stack_size(Stack *stack) {
+  assert(stack && "Stack is NULL");
+
+  return stack->length;
 }

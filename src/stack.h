@@ -1,8 +1,7 @@
 #ifndef STACK_H_
 #define STACK_H_
 
-#include <stdlib.h>
-#include <string.h>
+#include "common.h"
 
 typedef struct Node Node;
 
@@ -22,5 +21,6 @@ void stack_push(Stack *stack, void *data);
 void *stack_pop(Stack *stack);
 void *stack_peek(Stack *stack);
 void stack_destroy(Stack *stack);
+u32 stack_size(Stack *stack);
 
 #endif // STACK_H_

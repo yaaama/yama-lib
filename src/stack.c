@@ -52,14 +52,7 @@ void stack_push(Stack *stack, void *data) {
 /* NOTE: You are responsible for the deallocation of the returned item. */
 void *stack_pop(Stack *stack) {
   assert(stack != NULL && "Stack cannot be NULL");
-  if (stack == NULL) {
-    return NULL;
-  }
-
-  /* Stack is empty */
-  if (stack->length == 0) {
-    return NULL;
-  }
+  assert(stack->length > 0 && "Stack size must be > 0");
 
   /* Allocate */
   void *top_val = malloc(stack->item_size);

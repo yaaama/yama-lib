@@ -22,4 +22,11 @@ A repository storing C code that I plan to reuse.
 
 
 
-# Algorithms (TBD)
+# Algorithms and functions (TBD)
+
+## Null terminated strings
+
+- [ ] Trim trailing whitespace
+- [ ] Trim leading whitespace
+- [ ] Trim whitespace (both trailing and leading)
+

@@ -1,7 +1,14 @@
-#ifndef UTILS_H_
-#define UTILS_H_
-#include <stdlib.h>
+#ifndef CHAR_UTILS_H_
+#define CHAR_UTILS_H_
+#include "common.h"
 
-static inline void trim_trailing_ws(char *str, size_t len);
+int yama_char_is_space(char c);
+int yama_char_is_digit(char c);
+int yama_char_is_lowercase(char c);
+int yama_char_is_alphanumerical(char c);
 
-#endif // UTILS_H_
+
+void yama_str_trim_trailing_ws(char *str, u32 len);
+void yama_str_trim_leading_ws(char *str, u32 len);
+
+#endif // CHAR_UTILS_H_

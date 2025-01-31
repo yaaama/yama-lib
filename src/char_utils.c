@@ -2,14 +2,9 @@
 #include "common.h"
 #include <string.h>
 
+int yama_char_is_lowercase(char c) { return 'a' <= c && c <= 'z'; }
 
-int yama_char_is_lowercase(char c) {
-  return 'a' <= c && c <= 'z';
-}
-
-int yama_char_is_uppercase(char c) {
-  return 'A' <= c && c <= 'Z';
-}
+int yama_char_is_uppercase(char c) { return 'A' <= c && c <= 'Z'; }
 
 int yama_char_is_alphanumerical(char c) {
   return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') ||

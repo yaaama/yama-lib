@@ -47,5 +47,21 @@ void yama_str_trim_leading_ws(char *str, u32 len) {
   }
 
   str[len - count] = '\0';
+}
 
+/* Counts the number of characters until 'n' has reached */
+int yama_str_length_n(char *str, u32 n) {
+
+  char *curr = str;
+  int count = 0;
+  while ((curr) && ((u32)count < n)) {
+    ++count;
+    ++curr;
+  }
+
+  if (count) {
+    return count;
+  }
+
+  return -1;
 }

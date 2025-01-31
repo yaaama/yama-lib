@@ -8,7 +8,10 @@ int yama_char_is_lowercase(char c);
 int yama_char_is_alphanumerical(char c);
 
 
+int yama_str_length(char *str);
+int yama_str_length_n(char *str, u32 n);
 void yama_str_trim_trailing_ws(char *str, u32 len);
 void yama_str_trim_leading_ws(char *str, u32 len);
+
 
 #endif // CHAR_UTILS_H_

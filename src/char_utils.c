@@ -1,24 +1,35 @@
 #include "char_utils.h"
+
+#include <assert.h>
+
 #include "common.h"
-#include <string.h>
 
-int yama_char_is_lowercase(char c) { return 'a' <= c && c <= 'z'; }
-
-int yama_char_is_uppercase(char c) { return 'A' <= c && c <= 'Z'; }
-
-int yama_char_is_alphanumerical(char c) {
-  return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') ||
-         ('a' <= c && c <= 'z');
+int yama_char_is_lower(char character) {
+  return 'a' <= character && character <= 'z';
 }
 
-int yama_char_is_space(char c) {
-
-  return c == '\t' || c == ' ' || c == '\r' || c == '\v' || c == '\f';
+int yama_char_is_upper(char character) {
+  return 'A' <= character && character <= 'Z';
 }
 
-int yama_char_is_digit(char c) { return '0' <= c && '9' >= c; }
+int yama_char_is_alphanum(char character) {
+  return ('0' <= character && character <= '9') ||
+         ('A' <= character && character <= 'Z') ||
+         ('a' <= character && character <= 'z');
+}
+
+int yama_char_is_ws(char character) {
+  return character == '\t' || character == ' ' || character == '\r' ||
+         character == '\v' || character == '\f';
+}
 
 void yama_str_trim_trailing_ws(char *str, u32 len) {
+
+  assert(str && len > 0);
+
+  if ((!str) || (len == 0)) {
+    return;
+  }
 
   /* Jump to end of string */
   char *end = str;
@@ -27,7 +38,7 @@ void yama_str_trim_trailing_ws(char *str, u32 len) {
   /* While character is space and not NULL.
   * Checking for NULL is required otherwise 'isspace' will produce undefined
    behaviour when encountering a nonstandard character. */
-  while ((end != null) && yama_char_is_space(*end)) {
+  while (yama_char_is_ws(*end)) {
     /* Move backwards */
     --end;
   }
@@ -38,7 +49,7 @@ void yama_str_trim_leading_ws(char *str, u32 len) {
 
   u32 count = 0;
 
-  while ((count < len) && yama_char_is_space(str[count])) {
+  while ((count < len) && yama_char_is_ws(str[count])) {
     ++count;
   }
 

@@ -1,7 +1,7 @@
 #ifndef STACK_H_
 #define STACK_H_
 
-#include "common.h"
+#include "../common.h"
 
 typedef struct Node Node;
 

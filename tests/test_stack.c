@@ -1,4 +1,4 @@
-#include "../src/stack.h"
+#include "../src/containers/stack.h"
 #include <criterion/assert.h>
 #include <criterion/criterion.h>
 #include <criterion/internal/assert.h>

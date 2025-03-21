@@ -4,90 +4,69 @@
 # @file
 # @version 0.1
 
-# Compiler
-CC = clang
-
 NAME := yama-lib
-# Commands:
-RM := rm -f
+
 # Flags for "make" itself
 MAKEFLAGS += --no-print-directory
-DIR_DUP = mkdir -p $(@D)
 
+# Compiler
+CC = clang
+CFLAGS = -Wall -Wextra -I./src -Wall -std=c11 -pedantic
+
+
+ifdef DEBUG
+CFLAGS += -g -O0 -Wextra -Wunused -Wstrict-prototypes -Wold-style-definition \
+-Wshadow -Wvla  -Wconversion
+else
+CFLAGS += -O3 -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion
+endif
+
+ifdef SANITIZE
+CFLAGS += -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
+LDFLAGS += -fsanitize=address -fsanitize=undefined
+endif
 
 ##################
 # # Sources, etc #
 ##################
 
-SRCDIR = src
-BUILDDIR = build
-TESTDIR = tests
+SRC_DIR = src
+TESTS_DIR = tests
 
-# Source files excluding main.c for tests
-SRCS := $(filter-out $(SRCDIR)/main.c, $(wildcard $(SRCDIR)/*.c))
-# All source files for building the main executable
-ALL_SRCS = $(wildcard $(SRCDIR)/*.c)
+BUILD_DIR = build
+TEST_BIN = $(BUILD_DIR)/test_runner
+OBJ_DIR = $(BUILD_DIR)/obj
 
-# Object files (for main)
-OBJS = $(addprefix $(BUILDDIR)/,$(notdir $(ALL_SRCS:.c=.o)))
-# Object files excluding main.c for testing purposes
-TEST_OBJS = $(addprefix $(BUILDDIR)/,$(notdir $(SRCS:.c=.o)))
-
-# Test source files
-TEST_SRCS = $(wildcard $(TESTDIR)/*.c)
-# Test object files
-TEST_OBJ_FILES = $(addprefix $(BUILDDIR)/,$(notdir $(TEST_SRCS:.c=.o)))
+SRC_FILES = $(shell find $(SRC_DIR) -name '*.c')
+SRC_OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
+TEST_FILES = $(wildcard $(TESTS_DIR)/*.c)
+TEST_OBJ = $(patsubst $(TESTS_DIR)/%.c, $(OBJ_DIR)/$(TESTS_DIR)/%.o, $(TEST_FILES))
 
 
-# Compiler options
-CFLAGS := -Wall -ggdb -O0 -std=c11 -Wextra -Wunused -pedantic
-CFLAGS += -MMD -MP -Wstrict-prototypes -Wold-style-definition
-CFLAGS += -Wshadow -Wvla -Wno-unused-parameter -Wno-unused-function -Wconversion -Wno-sign-conversion
-CFLAGS_ASAN := -fsanitize=address -fsanitize=undefined
-CFLAGS += -fsanitize=address -fsanitize=undefined
+.PHONY: all test clean
 
 #############
 # # Targets #
 #############
 
-# Default target to build only the main library
-all: build/yama-lib
+all: test
 
-# Build the main library
-build/yama-lib: $(OBJS)
-	$(CC) $(CFLAGS) $(CFLAGS_ASAN) -o $@ $^
-	$(info CREATED $(NAME))
+test: $(TEST_BIN)
+	./$(TEST_BIN) -- -j1 --verbose=5
 
-# Compile source files into object files (includes main.c)
-build/%.o: src/%.c
-	$(DIR_DUP)
-	$(CC) $(CFLAGS) -c -o $@ $<
-	$(info CREATED $@)
+$(TEST_BIN): $(TEST_OBJ) $(SRC_OBJ)
+	@mkdir -p $(@D)
+	$(CC) $^ $(LDFLAGS) -lcriterion -o $@
 
-# Test target: builds and runs the tests without main.c
-tests: build/tests-runner
-	$(info RUNNING TESTS)
-	./build/tests-runner
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Test runner executable, linking library object files (excluding main.c) and test object files
-build/tests-runner: $(TEST_OBJS) $(TEST_OBJ_FILES)
-	$(CC) $(CFLAGS) -o $@ $^ -lcriterion
-	$(info CREATED test runner)
+$(OBJ_DIR)/$(TESTS_DIR)/%.o: $(TESTS_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile test files into object files
-build/%.o: tests/%.c
-	$(DIR_DUP)
-	$(CC) $(CFLAGS) -c -o $@ $<
-	$(info CREATED test object $@)
-
-# Cleans build directory
 clean:
-	$(RM) $(OBJS) $(TEST_OBJ_FILES) build/tests-runner build/yama-lib
-
-fclean: clean
-
-.PHONY: clean fclean
-.SILENT:
-
+	rm -rf build
 
 # end
